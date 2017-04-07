@@ -41,18 +41,23 @@ class TwilioWrapper
     }
 
     /**
-     * @param string $from
-     * @param string $to
+     * @param string $from Phone number calling from
+     * @param string $to Destination phone number
+     * @param string $twiml TwiML URL
      * @return string Session ID
      */
-    public function call($from, $to)
+    public function call($from, $to, $twiml = self::TWIML_RESOURCE_URL)
     {
         if (!$this->isClientValid()) {
             return "Invalid Twilio Account details.";
         }
 
         try {
-            $call = $this->client->calls->create("sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token, $from, array('url' => self::TWIML_RESOURCE_URL));
+            $call = $this->client->calls->create(
+                "sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token,
+                $from,
+                array('url' => $twiml)
+            );
             return $call->sid;
         } catch (\Exception $e) {
             return $e->getMessage();
