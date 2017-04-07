@@ -1,9 +1,12 @@
 <?php
 namespace TwilioWithThinQLCR;
-//require_once __DIR__ . '/../../vendor/autoload.php'; // Loads the library
-use Services_Twilio;
 
-class TwilioWrapper {
+//require_once __DIR__ . '/../../vendor/autoload.php'; // Loads the library
+
+use Twilio\Rest\Client;
+
+class TwilioWrapper
+{
     private $client;
     private $twilio_account_sid;
     private $twilio_account_token;
@@ -12,29 +15,46 @@ class TwilioWrapper {
     const THINQ_DOMAIN = "wap.thinq.com";
     const TWIML_RESOURCE_URL = "http://demo.twilio.com/docs/voice.xml";
 
-    function __construct($twilio_account_sid, $twilio_account_token, $thinQ_id, $thinQ_token){
+    /**
+     * TwilioWrapper constructor.
+     * @param string $twilio_account_sid
+     * @param string $twilio_account_token
+     * @param string $thinQ_id
+     * @param string $thinQ_token
+     */
+    function __construct($twilio_account_sid, $twilio_account_token, $thinQ_id, $thinQ_token)
+    {
         $this->twilio_account_sid = $twilio_account_sid;
         $this->twilio_account_token = $twilio_account_token;
         $this->thinQ_id = $thinQ_id;
         $this->thinQ_token = $thinQ_token;
 
-        $this->client = new Services_Twilio($twilio_account_sid, $twilio_account_token);
+        $this->client = new Client($twilio_account_sid, $twilio_account_token);
     }
 
-    public function isClientValid(){
+    /**
+     * @return bool
+     */
+    public function isClientValid()
+    {
         return $this->client != null && $this->client->account != null;
     }
 
+    /**
+     * @param string $from
+     * @param string $to
+     * @return string Session ID
+     */
     public function call($from, $to)
     {
-        if(!$this->isClientValid()) {
+        if (!$this->isClientValid()) {
             return "Invalid Twilio Account details.";
         }
 
-        try{
-            $call = $this->client->account->calls->create($from, "sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token, self::TWIML_RESOURCE_URL);
+        try {
+            $call = $this->client->calls->create("sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token, $from, array('url' => self::TWIML_RESOURCE_URL));
             return $call->sid;
-        }catch(Exception $e){
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
