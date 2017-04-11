@@ -3,7 +3,8 @@ namespace TwilioWithThinQLCR;
 //require_once __DIR__ . '/../../vendor/autoload.php'; // Loads the library
 use Services_Twilio;
 
-class TwilioWrapper {
+class TwilioWrapper
+{
     private $client;
     private $twilio_account_sid;
     private $twilio_account_token;
@@ -12,7 +13,8 @@ class TwilioWrapper {
     const THINQ_DOMAIN = "wap.thinq.com";
     const TWIML_RESOURCE_URL = "http://demo.twilio.com/docs/voice.xml";
 
-    function __construct($twilio_account_sid, $twilio_account_token, $thinQ_id, $thinQ_token){
+    function __construct($twilio_account_sid, $twilio_account_token, $thinQ_id, $thinQ_token)
+    {
         $this->twilio_account_sid = $twilio_account_sid;
         $this->twilio_account_token = $twilio_account_token;
         $this->thinQ_id = $thinQ_id;
@@ -21,20 +23,20 @@ class TwilioWrapper {
         $this->client = new Services_Twilio($twilio_account_sid, $twilio_account_token);
     }
 
-    public function isClientValid(){
+    public function isClientValid() {
         return $this->client != null && $this->client->account != null;
     }
 
-    public function call($from, $to)
+    public function call($from, $to, $twiML = self::TWIML_RESOURCE_URL)
     {
-        if(!$this->isClientValid()) {
+        if (!$this->isClientValid()) {
             return "Invalid Twilio Account details.";
         }
 
-        try{
-            $call = $this->client->account->calls->create($from, "sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token, self::TWIML_RESOURCE_URL);
-            return $call->sid;
-        }catch(Exception $e){
+        try {
+            return $this->client->account->calls->create($from, "sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token, $twiML);
+        }
+        catch (Exception $e) {
             return $e->getMessage();
         }
     }
