@@ -1,6 +1,6 @@
 # Twilio Wrapper PHP Library For thinQ LCR integration
 
-#### Note that you will need a valid LCR Account with thinQ before using the libraries. For more information please contact your thinQ Sales representative at [http://www.thinq.com/developer-documentation/least-cost-routing-twilio-voice/wrapper-library/#PHP](http://www.thinq.com/developer-documentation/least-cost-routing-twilio-voice/wrapper-library/#PHP)
+#### Note that you will need a valid LCR Account with thinQ before using the libraries. For more information please contact your thinQ Sales representative at [http://www.thinq.com](http://www.thinq.com)
 
 Example usage:
 
