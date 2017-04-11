@@ -3,6 +3,7 @@ namespace TwilioWithThinQLCR;
 
 //require_once __DIR__ . '/../../vendor/autoload.php'; // Loads the library
 
+use Twilio\Rest\Api\V2010\Account\CallInstance;
 use Twilio\Rest\Client;
 
 class TwilioWrapper
@@ -43,10 +44,10 @@ class TwilioWrapper
     /**
      * @param string $from Phone number calling from
      * @param string $to Destination phone number
-     * @param string $twiml TwiML URL
-     * @return string Session ID
+     * @param array $options Optional arguments
+     * @return CallInstance|String New call instance or error message
      */
-    public function call($from, $to, $twiml = self::TWIML_RESOURCE_URL)
+    public function call($from, $to, $options)
     {
         if (!$this->isClientValid()) {
             return "Invalid Twilio Account details.";
@@ -56,9 +57,9 @@ class TwilioWrapper
             $call = $this->client->calls->create(
                 "sip:" . $to . "@". self::THINQ_DOMAIN . '?thinQid='.$this->thinQ_id . '&thinQtoken='.$this->thinQ_token,
                 $from,
-                array('url' => $twiml)
+                $options
             );
-            return $call->sid;
+            return $call;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
